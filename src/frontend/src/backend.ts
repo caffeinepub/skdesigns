@@ -99,12 +99,29 @@ export interface Submission {
 }
 export type Time = bigint;
 export interface backendInterface {
+    adminLogin(username: string, password: string): Promise<string>;
     getAll(): Promise<Array<Submission>>;
     getById(id: string): Promise<Submission>;
+    getSubmissionCount(token: string): Promise<bigint>;
+    getSubmissions(token: string): Promise<Array<Submission>>;
     submit(name: string, email: string, projectType: string, message: string): Promise<string>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async adminLogin(arg0: string, arg1: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminLogin(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminLogin(arg0, arg1);
+            return result;
+        }
+    }
     async getAll(): Promise<Array<Submission>> {
         if (this.processError) {
             try {
@@ -130,6 +147,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getById(arg0);
+            return result;
+        }
+    }
+    async getSubmissionCount(arg0: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSubmissionCount(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSubmissionCount(arg0);
+            return result;
+        }
+    }
+    async getSubmissions(arg0: string): Promise<Array<Submission>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSubmissions(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSubmissions(arg0);
             return result;
         }
     }

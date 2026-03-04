@@ -21,6 +21,10 @@ actor {
     };
   };
 
+  let adminUsername = "suryanshswaraj100@gmail.com";
+  let adminPassword = "surya_6745";
+  let adminToken = "sk_admin_token_9f3a2b";
+
   var nextId = 1;
 
   let submissions = Map.empty<Text, Submission>();
@@ -54,6 +58,30 @@ actor {
     switch (submissions.get(id)) {
       case (null) { Runtime.trap("Submission not found") };
       case (?submission) { submission };
+    };
+  };
+
+  public shared ({ caller }) func adminLogin(username : Text, password : Text) : async Text {
+    if (username == adminUsername and password == adminPassword) {
+      adminToken;
+    } else {
+      Runtime.trap("Invalid credentials");
+    };
+  };
+
+  public shared ({ caller }) func getSubmissions(token : Text) : async [Submission] {
+    if (token == adminToken) {
+      submissions.values().toArray().sort();
+    } else {
+      Runtime.trap("Unauthorized");
+    };
+  };
+
+  public shared ({ caller }) func getSubmissionCount(token : Text) : async Nat {
+    if (token == adminToken) {
+      submissions.size();
+    } else {
+      Runtime.trap("Unauthorized");
     };
   };
 };

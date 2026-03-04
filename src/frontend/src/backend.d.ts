@@ -17,7 +17,10 @@ export interface Submission {
 }
 export type Time = bigint;
 export interface backendInterface {
+    adminLogin(username: string, password: string): Promise<string>;
     getAll(): Promise<Array<Submission>>;
     getById(id: string): Promise<Submission>;
+    getSubmissionCount(token: string): Promise<bigint>;
+    getSubmissions(token: string): Promise<Array<Submission>>;
     submit(name: string, email: string, projectType: string, message: string): Promise<string>;
 }

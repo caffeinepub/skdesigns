@@ -20,8 +20,11 @@ export interface Submission {
 }
 export type Time = bigint;
 export interface _SERVICE {
+  'adminLogin' : ActorMethod<[string, string], string>,
   'getAll' : ActorMethod<[], Array<Submission>>,
   'getById' : ActorMethod<[string], Submission>,
+  'getSubmissionCount' : ActorMethod<[string], bigint>,
+  'getSubmissions' : ActorMethod<[string], Array<Submission>>,
   'submit' : ActorMethod<[string, string, string, string], string>,
 }
 export declare const idlService: IDL.ServiceClass;

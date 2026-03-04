@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { Outlet, createRootRoute, createRoute } from "@tanstack/react-router";
 import Layout from "./components/Layout";
+import AdminPage from "./pages/AdminPage";
 import ContactPage from "./pages/ContactPage";
 import GraphicDesignPage from "./pages/GraphicDesignPage";
 import HomePage from "./pages/HomePage";
@@ -9,6 +10,7 @@ import UIUXPage from "./pages/UIUXPage";
 import VideoCreationPage from "./pages/VideoCreationPage";
 import WebDesignPage from "./pages/WebDesignPage";
 
+// ─── Public site root (with Layout) ────────────────────────────────────────
 const rootRoute = createRootRoute({
   component: () => (
     <>
@@ -56,7 +58,19 @@ const contactRoute = createRoute({
   component: ContactPage,
 });
 
-const routeTree = rootRoute.addChildren([
+// ─── Admin root (no Layout — standalone portal) ─────────────────────────────
+const adminRootRoute = createRootRoute({
+  component: () => <Outlet />,
+});
+
+const adminRoute = createRoute({
+  getParentRoute: () => adminRootRoute,
+  path: "/admin",
+  component: AdminPage,
+});
+
+// ─── Route trees ─────────────────────────────────────────────────────────────
+const publicRouteTree = rootRoute.addChildren([
   indexRoute,
   webDesignRoute,
   graphicDesignRoute,
@@ -65,7 +79,14 @@ const routeTree = rootRoute.addChildren([
   contactRoute,
 ]);
 
-const router = createRouter({ routeTree });
+const adminRouteTree = adminRootRoute.addChildren([adminRoute]);
+
+// ─── Router selection ─────────────────────────────────────────────────────────
+const isAdminPath = window.location.pathname.startsWith("/admin");
+
+const router = createRouter({
+  routeTree: isAdminPath ? adminRouteTree : publicRouteTree,
+});
 
 declare module "@tanstack/react-router" {
   interface Register {

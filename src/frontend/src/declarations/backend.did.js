@@ -19,8 +19,11 @@ export const Submission = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'adminLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
   'getAll' : IDL.Func([], [IDL.Vec(Submission)], ['query']),
   'getById' : IDL.Func([IDL.Text], [Submission], ['query']),
+  'getSubmissionCount' : IDL.Func([IDL.Text], [IDL.Nat], []),
+  'getSubmissions' : IDL.Func([IDL.Text], [IDL.Vec(Submission)], []),
   'submit' : IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Text], [IDL.Text], []),
 });
 
@@ -38,8 +41,11 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'adminLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
     'getAll' : IDL.Func([], [IDL.Vec(Submission)], ['query']),
     'getById' : IDL.Func([IDL.Text], [Submission], ['query']),
+    'getSubmissionCount' : IDL.Func([IDL.Text], [IDL.Nat], []),
+    'getSubmissions' : IDL.Func([IDL.Text], [IDL.Vec(Submission)], []),
     'submit' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [IDL.Text],

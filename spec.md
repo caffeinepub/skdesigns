@@ -1,34 +1,28 @@
-# SKdesigns Portfolio Website
+# SKdesigns
 
 ## Current State
-New project. No existing code or backend.
+- Motoko backend stores contact form submissions (name, email, projectType, message, timestamp) with `submit`, `getAll`, and `getById` endpoints — no authentication.
+- Frontend has 6 pages: Home, Web Design, Graphic Design, UI/UX Design, Video Creation, Contact.
+- Contact page submits to backend via `actor.submit(...)`.
+- No admin area exists.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Multi-page luxury portfolio website for SKdesigns design brand
-- Pages: Home (/), Web Design (/web-design), Graphic Design (/graphic-design), UI/UX Design (/ui-ux-design), Video Creation (/video-creation), Contact (/contact)
-- Hero section with large bold headline, subheadline, and two CTA buttons
-- Services section with 4 cards (Web Design, Graphic Design, UI/UX Design, Video Creation) with hover animations
-- Featured Work section with 6 mock project showcases with dark overlays
-- About SKdesigns section with professional statement
-- Contact form (Name, Email, Project Type, Message) with backend storage
-- Sticky transparent header that turns solid on scroll
-- Professional footer with navigation links and social links
+- Backend: `adminLogin(username, password)` function returning a session token on success, error on failure. Hardcoded credentials: username `suryanshswaraj100@gmail.com`, password `surya_6745`.
+- Backend: `getSubmissions(token)` protected endpoint — only returns submissions if token is valid.
+- Backend: `getSubmissionCount(token)` — returns total count if token is valid.
+- Frontend: `/admin` route — outside the main Layout (no header/footer), standalone page.
+- Frontend: Admin Login page at `/admin` — username + password form, JWT-style session stored in localStorage.
+- Frontend: Admin Dashboard at `/admin` (post-login) — shows total submission count, a table of all submissions (name, email, project type, message, date), with a logout button.
 
 ### Modify
-- N/A (new project)
+- `App.tsx` — add `/admin` route that renders AdminPage outside the main Layout.
 
 ### Remove
-- N/A (new project)
+- Nothing removed.
 
 ## Implementation Plan
-1. Backend: Motoko canister to store contact form submissions (name, email, project type, message, timestamp)
-2. Frontend assets: Generate hero background, logo mark, and 6 project preview images
-3. Frontend: React app with React Router for multi-page routing
-   - Global layout with sticky header and footer
-   - Home page with all 5 sections
-   - Individual service pages (Web Design, Graphic Design, UI/UX, Video Creation) with service details
-   - Contact page with form wired to backend
-4. Design: Deep matte black (#0B0B0B) background, white/soft gray text, metallic gold (#C6A75E) accents, modern sans-serif typography
-5. Animations: Smooth page transitions, gold hover effects on cards and buttons, subtle motion in hero
+1. Update `main.mo` to add `adminLogin`, `getSubmissions`, `getSubmissionCount` with hardcoded credential check and simple token validation.
+2. Create `src/frontend/src/pages/AdminPage.tsx` with login form + dashboard view, session stored in localStorage.
+3. Update `App.tsx` to add `/admin` route outside the Layout wrapper.
