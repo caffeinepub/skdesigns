@@ -1,28 +1,21 @@
 # SKdesigns
 
 ## Current State
-- Motoko backend stores contact form submissions (name, email, projectType, message, timestamp) with `submit`, `getAll`, and `getById` endpoints — no authentication.
-- Frontend has 6 pages: Home, Web Design, Graphic Design, UI/UX Design, Video Creation, Contact.
-- Contact page submits to backend via `actor.submit(...)`.
-- No admin area exists.
+Full-stack portfolio site with admin portal. Backend stores contact form submissions and portfolio items. Admin login uses hardcoded credentials in Motoko. The frontend `AdminPage.tsx` was not restoring the session token from localStorage on mount, always showing the login screen. A stale token from a prior deployment may also cause "unauthorized" errors even after a fresh login.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Backend: `adminLogin(username, password)` function returning a session token on success, error on failure. Hardcoded credentials: username `suryanshswaraj100@gmail.com`, password `surya_6745`.
-- Backend: `getSubmissions(token)` protected endpoint — only returns submissions if token is valid.
-- Backend: `getSubmissionCount(token)` — returns total count if token is valid.
-- Frontend: `/admin` route — outside the main Layout (no header/footer), standalone page.
-- Frontend: Admin Login page at `/admin` — username + password form, JWT-style session stored in localStorage.
-- Frontend: Admin Dashboard at `/admin` (post-login) — shows total submission count, a table of all submissions (name, email, project type, message, date), with a logout button.
+- Nothing new
 
 ### Modify
-- `App.tsx` — add `/admin` route that renders AdminPage outside the main Layout.
+- Backend: refresh the admin token string to bust stale cached tokens from prior deployments; keep credentials identical (`suryanshswaraj100@gmail.com` / `surya_6745`)
+- Frontend (already done): AdminPage now restores session from localStorage on mount; login form trims whitespace from username/password before submission
 
 ### Remove
-- Nothing removed.
+- Nothing
 
 ## Implementation Plan
-1. Update `main.mo` to add `adminLogin`, `getSubmissions`, `getSubmissionCount` with hardcoded credential check and simple token validation.
-2. Create `src/frontend/src/pages/AdminPage.tsx` with login form + dashboard view, session stored in localStorage.
-3. Update `App.tsx` to add `/admin` route outside the Layout wrapper.
+1. Regenerate backend with a fresh token string to invalidate stale sessions from prior deployments
+2. Frontend AdminPage fixes already applied (session restore + trim)
+3. Validate and deploy

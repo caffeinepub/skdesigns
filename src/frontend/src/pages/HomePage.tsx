@@ -1,13 +1,16 @@
+import type { PortfolioItem } from "@/backend";
+import { useActor } from "@/hooks/useActor";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
-  ArrowDown,
   ArrowRight,
   Film,
+  ImageOff,
   Monitor,
   Palette,
   Smartphone,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const services = [
   {
@@ -36,47 +39,97 @@ const services = [
   },
 ];
 
-const projects = [
-  {
-    title: "LuxeStay",
-    category: "Real Estate Platform",
-    image: "/assets/generated/project-realestate.dim_800x500.jpg",
-  },
-  {
-    title: "Noir Fashion",
-    category: "E-Commerce",
-    image: "/assets/generated/project-fashion.dim_800x500.jpg",
-  },
-  {
-    title: "Vertex",
-    category: "Brand Identity",
-    image: "/assets/generated/project-branding.dim_800x500.jpg",
-  },
-  {
-    title: "Aria UI",
-    category: "Mobile App",
-    image: "/assets/generated/project-uiux.dim_800x500.jpg",
-  },
-  {
-    title: "Prestige Films",
-    category: "Video Campaign",
-    image: "/assets/generated/project-video.dim_800x500.jpg",
-  },
-  {
-    title: "Meridian",
-    category: "Web Platform",
-    image: "/assets/generated/project-web-design.dim_800x500.jpg",
-  },
-];
-
 const stats = [
   { value: "50+", label: "Projects Delivered" },
   { value: "3", label: "Continents Served" },
   { value: "100%", label: "Client Satisfaction" },
 ];
 
+// ─── Portfolio Card with image error fallback ──────────────────────────────
+function PortfolioCard({ item }: { item: PortfolioItem }) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      className="project-card group aspect-[8/5] rounded-sm overflow-hidden"
+      style={{ border: "1px solid oklch(0.18 0 0)" }}
+    >
+      <div className="relative w-full h-full">
+        {imgError ? (
+          /* Styled placeholder when image URL fails to load */
+          <div
+            className="w-full h-full flex flex-col items-center justify-center gap-3"
+            style={{ background: "oklch(0.11 0 0)" }}
+          >
+            <ImageOff
+              size={28}
+              style={{ color: "oklch(0.72 0.12 75 / 0.4)" }}
+            />
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.6875rem",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "oklch(0.38 0 0)",
+              }}
+            >
+              Image unavailable
+            </span>
+          </div>
+        ) : (
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        )}
+        <div className="overlay absolute inset-0" />
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div
+            className="w-8 h-px mb-3 transition-all duration-300 group-hover:w-12"
+            style={{ background: "var(--gold)" }}
+          />
+          <p
+            className="text-xs tracking-widest uppercase mb-1"
+            style={{
+              color: "var(--gold)",
+              letterSpacing: "0.18em",
+              fontFamily: "Inter, sans-serif",
+            }}
+          >
+            {item.category}
+          </p>
+          <h3
+            style={{
+              fontFamily: "Cormorant Garamond, serif",
+              fontSize: "1.5rem",
+              fontWeight: 600,
+              color: "oklch(0.98 0 0)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {item.title}
+          </h3>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const workRef = useRef<HTMLElement>(null);
+  const { actor } = useActor();
+
+  const { data: portfolioItems = [], isLoading: portfolioLoading } = useQuery<
+    PortfolioItem[]
+  >({
+    queryKey: ["portfolio"],
+    queryFn: () => actor!.getPortfolioItems(),
+    enabled: !!actor,
+  });
 
   const scrollToWork = () => {
     workRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -378,52 +431,55 @@ export default function HomePage() {
           </div>
 
           {/* Project grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+          {portfolioLoading ? (
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              data-ocid="portfolio.loading_state"
+            >
+              {[1, 2, 3].map((n) => (
+                <div
+                  key={n}
+                  className="aspect-[8/5] rounded-sm animate-pulse"
+                  style={{
+                    background: "oklch(0.13 0 0)",
+                    border: "1px solid oklch(0.18 0 0)",
+                  }}
+                />
+              ))}
+            </div>
+          ) : portfolioItems.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-20"
+              data-ocid="portfolio.empty_state"
+            >
               <div
-                key={project.title}
-                className="project-card group aspect-[8/5] rounded-sm overflow-hidden"
-                style={{ border: "1px solid oklch(0.18 0 0)" }}
+                className="w-16 h-px mb-8"
+                style={{
+                  background:
+                    "linear-gradient(to right, transparent, var(--gold), transparent)",
+                }}
+              />
+              <p
+                style={{
+                  fontFamily: "Cormorant Garamond, serif",
+                  fontSize: "1.375rem",
+                  fontWeight: 300,
+                  color: "oklch(0.45 0 0)",
+                  letterSpacing: "0.06em",
+                  fontStyle: "italic",
+                  textAlign: "center",
+                }}
               >
-                <div className="relative w-full h-full">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="overlay absolute inset-0" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div
-                      className="w-8 h-px mb-3 transition-all duration-300 group-hover:w-12"
-                      style={{ background: "var(--gold)" }}
-                    />
-                    <p
-                      className="text-xs tracking-widest uppercase mb-1"
-                      style={{
-                        color: "var(--gold)",
-                        letterSpacing: "0.18em",
-                        fontFamily: "Inter, sans-serif",
-                      }}
-                    >
-                      {project.category}
-                    </p>
-                    <h3
-                      style={{
-                        fontFamily: "Cormorant Garamond, serif",
-                        fontSize: "1.5rem",
-                        fontWeight: 600,
-                        color: "oklch(0.98 0 0)",
-                        letterSpacing: "0.02em",
-                      }}
-                    >
-                      {project.title}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                No projects yet — check back soon.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {portfolioItems.map((item) => (
+                <PortfolioCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

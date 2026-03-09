@@ -89,6 +89,7 @@ export class ExternalBlob {
         return this;
     }
 }
+export type Time = bigint;
 export interface Submission {
     id: string;
     projectType: string;
@@ -97,17 +98,42 @@ export interface Submission {
     message: string;
     timestamp: Time;
 }
-export type Time = bigint;
+export interface PortfolioItem {
+    id: string;
+    title: string;
+    order: bigint;
+    description: string;
+    imageUrl: string;
+    category: string;
+}
 export interface backendInterface {
+    addPortfolioItem(token: string, title: string, category: string, description: string, imageUrl: string): Promise<string>;
     adminLogin(username: string, password: string): Promise<string>;
+    deletePortfolioItem(token: string, id: string): Promise<boolean>;
     getAll(): Promise<Array<Submission>>;
     getById(id: string): Promise<Submission>;
+    getPortfolioItems(): Promise<Array<PortfolioItem>>;
     getSubmissionCount(token: string): Promise<bigint>;
     getSubmissions(token: string): Promise<Array<Submission>>;
     submit(name: string, email: string, projectType: string, message: string): Promise<string>;
+    updatePortfolioItem(token: string, id: string, title: string, category: string, description: string, imageUrl: string): Promise<boolean>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async addPortfolioItem(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPortfolioItem(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPortfolioItem(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
     async adminLogin(arg0: string, arg1: string): Promise<string> {
         if (this.processError) {
             try {
@@ -119,6 +145,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.adminLogin(arg0, arg1);
+            return result;
+        }
+    }
+    async deletePortfolioItem(arg0: string, arg1: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePortfolioItem(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePortfolioItem(arg0, arg1);
             return result;
         }
     }
@@ -147,6 +187,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getById(arg0);
+            return result;
+        }
+    }
+    async getPortfolioItems(): Promise<Array<PortfolioItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPortfolioItems();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPortfolioItems();
             return result;
         }
     }
@@ -189,6 +243,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.submit(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
+    async updatePortfolioItem(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePortfolioItem(arg0, arg1, arg2, arg3, arg4, arg5);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePortfolioItem(arg0, arg1, arg2, arg3, arg4, arg5);
             return result;
         }
     }

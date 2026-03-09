@@ -10,6 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface PortfolioItem {
+  'id' : string,
+  'title' : string,
+  'order' : bigint,
+  'description' : string,
+  'imageUrl' : string,
+  'category' : string,
+}
 export interface Submission {
   'id' : string,
   'projectType' : string,
@@ -20,12 +28,22 @@ export interface Submission {
 }
 export type Time = bigint;
 export interface _SERVICE {
+  'addPortfolioItem' : ActorMethod<
+    [string, string, string, string, string],
+    string
+  >,
   'adminLogin' : ActorMethod<[string, string], string>,
+  'deletePortfolioItem' : ActorMethod<[string, string], boolean>,
   'getAll' : ActorMethod<[], Array<Submission>>,
   'getById' : ActorMethod<[string], Submission>,
+  'getPortfolioItems' : ActorMethod<[], Array<PortfolioItem>>,
   'getSubmissionCount' : ActorMethod<[string], bigint>,
   'getSubmissions' : ActorMethod<[string], Array<Submission>>,
   'submit' : ActorMethod<[string, string, string, string], string>,
+  'updatePortfolioItem' : ActorMethod<
+    [string, string, string, string, string, string],
+    boolean
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

@@ -17,14 +17,34 @@ export const Submission = IDL.Record({
   'message' : IDL.Text,
   'timestamp' : Time,
 });
+export const PortfolioItem = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'order' : IDL.Nat,
+  'description' : IDL.Text,
+  'imageUrl' : IDL.Text,
+  'category' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
+  'addPortfolioItem' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Text],
+      [],
+    ),
   'adminLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
+  'deletePortfolioItem' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
   'getAll' : IDL.Func([], [IDL.Vec(Submission)], ['query']),
   'getById' : IDL.Func([IDL.Text], [Submission], ['query']),
+  'getPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
   'getSubmissionCount' : IDL.Func([IDL.Text], [IDL.Nat], []),
   'getSubmissions' : IDL.Func([IDL.Text], [IDL.Vec(Submission)], []),
   'submit' : IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Text], [IDL.Text], []),
+  'updatePortfolioItem' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -39,16 +59,36 @@ export const idlFactory = ({ IDL }) => {
     'message' : IDL.Text,
     'timestamp' : Time,
   });
+  const PortfolioItem = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'order' : IDL.Nat,
+    'description' : IDL.Text,
+    'imageUrl' : IDL.Text,
+    'category' : IDL.Text,
+  });
   
   return IDL.Service({
+    'addPortfolioItem' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Text],
+        [],
+      ),
     'adminLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Text], []),
+    'deletePortfolioItem' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
     'getAll' : IDL.Func([], [IDL.Vec(Submission)], ['query']),
     'getById' : IDL.Func([IDL.Text], [Submission], ['query']),
+    'getPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
     'getSubmissionCount' : IDL.Func([IDL.Text], [IDL.Nat], []),
     'getSubmissions' : IDL.Func([IDL.Text], [IDL.Vec(Submission)], []),
     'submit' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [IDL.Text],
+        [],
+      ),
+    'updatePortfolioItem' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Bool],
         [],
       ),
   });
